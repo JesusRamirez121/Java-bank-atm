@@ -1,4 +1,6 @@
-package com.bdo.screenplay;
+package com.bdo.screenplay.account;
+
+import com.bdo.screenplay.InsufficientFundsException;
 
 public class SavingsAccount extends Account {
     private double interestRate;

@@ -1,5 +1,10 @@
 package com.bdo.screenplay;
 
+import com.bdo.screenplay.account.Account;
+import com.bdo.screenplay.account.CheckingAccount;
+import com.bdo.screenplay.factory.AccountFactory;
+import com.bdo.screenplay.factory.ConcreteAccountFactory;
+
 import java.util.Scanner;
 
 public class Main {
@@ -29,9 +34,11 @@ public class Main {
             System.out.println("3. Retirar dinero");
             System.out.println("4. Transacciones internacionales");
             System.out.println("5. Calculadora");
-            System.out.println("6. Salir");
+            System.out.println("6. Crear cuenta");
+            System.out.println("7. Salir");
             System.out.print("Seleccione una opción: ");
             int opcion = scanner.nextInt();
+            scanner.nextLine(); // Limpiar buffer
 
             switch (opcion) {
                 case 1:
@@ -40,12 +47,14 @@ public class Main {
                 case 2:
                     System.out.print("Ingrese monto a depositar: ");
                     double deposito = scanner.nextDouble();
+                    scanner.nextLine(); // Limpiar buffer
                     cuenta.deposit(deposito);
                     System.out.println("Depósito exitoso. Nuevo saldo: " + cuenta.getBalance());
                     break;
                 case 3:
                     System.out.print("Ingrese monto a retirar: ");
                     double retiro = scanner.nextDouble();
+                    scanner.nextLine(); // Limpiar buffer
                     double saldoAntes = cuenta.getBalance();
                     try {
                         cuenta.withdraw(retiro);
@@ -70,6 +79,7 @@ public class Main {
                     double num2 = scanner.nextDouble();
                     System.out.println("Seleccione operación: 1) Sumar 2) Restar 3) Multiplicar 4) Dividir");
                     int op = scanner.nextInt();
+                    scanner.nextLine(); // Limpiar buffer
                     try {
                         double resultado = switch (op) {
                             case 1 -> calc.add(num1, num2);
@@ -89,6 +99,37 @@ public class Main {
                     }
                     break;
                 case 6:
+                    System.out.print("Tipo de cuenta (savings/checking): ");
+                    String accountType = scanner.nextLine();
+
+                    System.out.print("Número de cuenta: ");
+                    String accountNumber = scanner.nextLine();
+
+                    System.out.print("Saldo inicial: ");
+                    double initialBalance = scanner.nextDouble();
+                    scanner.nextLine(); // Limpiar buffer
+
+                    System.out.print("PIN: ");
+                    String pin = scanner.nextLine();
+
+                    double interestRate = 0.0;
+                    if (accountType.equalsIgnoreCase("savings")) {
+                        System.out.print("Tasa de interés: ");
+                        interestRate = scanner.nextDouble();
+                        scanner.nextLine(); // Limpiar buffer
+                    }
+
+                    AccountFactory factory = new ConcreteAccountFactory();
+                    Account account;
+                    if (accountType.equalsIgnoreCase("savings")) {
+                        account = factory.createAccount(accountType, accountNumber, initialBalance, pin, interestRate);
+                    } else {
+                        account = factory.createAccount(accountType, accountNumber, initialBalance, pin);
+                    }
+
+                    System.out.println("Cuenta creada: " + account.getAccountNumber());
+                    break;
+                case 7:
                     running = false;
                     System.out.println("¡Hasta luego!");
                     break;

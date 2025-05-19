@@ -1,4 +1,6 @@
-package com.bdo.screenplay;
+package com.bdo.screenplay.account;
+
+import com.bdo.screenplay.InsufficientFundsException;
 
 public class CheckingAccount extends Account {
     private double overdraftLimit;
