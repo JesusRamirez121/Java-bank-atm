@@ -1,10 +1,6 @@
 package com.bdo.screenplay;
 
-import java.util.ArrayList;
 import java.util.Scanner;
-
-import static com.bdo.screenplay.Transations.deposit;
-import static com.bdo.screenplay.Transations.withdraw;
 
 public class Main {
 
@@ -23,9 +19,8 @@ public class Main {
             return;
         }
 
-        double balance = 1500.75;
+        Account cuenta = new Account("123456", 1500.75);
         boolean running = true;
-        ArrayList<String> transactionHistory = new ArrayList<>();
 
         while (running) {
             System.out.println("\n--- Menú ---");
@@ -40,22 +35,21 @@ public class Main {
 
             switch (opcion) {
                 case 1:
-                    System.out.println("Saldo actual: " + balance);
+                    System.out.println("Saldo actual: " + cuenta.getBalance());
                     break;
                 case 2:
-                    Transations transation = new Transations();
                     System.out.print("Ingrese monto a depositar: ");
                     double deposito = scanner.nextDouble();
-                    balance = deposit(deposito, balance, transactionHistory);
-                    System.out.println("Depósito exitoso. Nuevo saldo: " + balance);
+                    cuenta.deposit(deposito);
+                    System.out.println("Depósito exitoso. Nuevo saldo: " + cuenta.getBalance());
                     break;
                 case 3:
                     System.out.print("Ingrese monto a retirar: ");
                     double retiro = scanner.nextDouble();
-                    double nuevoBalance = withdraw(retiro, balance, transactionHistory);
-                    if (nuevoBalance != balance) {
-                        balance = nuevoBalance;
-                        System.out.println("Retiro exitoso. Nuevo saldo: " + balance);
+                    double saldoAntes = cuenta.getBalance();
+                    cuenta.withdraw(retiro);
+                    if (cuenta.getBalance() != saldoAntes) {
+                        System.out.println("Retiro exitoso. Nuevo saldo: " + cuenta.getBalance());
                     } else {
                         System.out.println("Fondos insuficientes.");
                     }
@@ -63,7 +57,6 @@ public class Main {
                 case 4:
                     System.out.println("Transacciones internacionales no disponibles en esta versión.");
                     break;
-
                 case 5:
                     Calculator calc = new Calculator();
                     System.out.println("--- Calculadora ---");
@@ -120,6 +113,4 @@ public class Main {
         }
         return false;
     }
-
-
 }
