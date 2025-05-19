@@ -1,28 +1,87 @@
 package com.bdo.screenplay;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import java.util.Scanner;
+
 public class Main {
-    public static void main(String[] args) {
-        //variables basicas
-        String accountNumber = "123456789";
-        double balance = 1500.75;
-        int pin = 1234;
 
-        // Array de montos de transacciones
-        int[] transactionAmounts = {200, -100, 50};
+        private int pin = 1234;
 
-        //operaciones con variables
-        balance += transactionAmounts[0]; // Deposito
-        if (balance>0 && pin == 1234) {
-            System.out.println("Transaction successful. New balance: " + balance);
-        } else {
-            System.out.println("Transaction failed. Insufficient funds or incorrect PIN.");
+        public static void main(String[] args) {
+            Main mainApp = new Main();
+            Scanner scanner = new Scanner(System.in);
+
+            // Autenticación antes del menú
+            System.out.print("Ingrese su PIN: ");
+            String inputPin = scanner.nextLine();
+            if (!mainApp.authenticateUser(inputPin)) {
+                System.out.println("Acceso denegado.");
+                scanner.close();
+                return;
+            }
+
+            double balance = 1500.75;
+            boolean running = true;
+
+            while (running) {
+                System.out.println("\n--- Menú ---");
+                System.out.println("1. Consultar saldo");
+                System.out.println("2. Depositar dinero");
+                System.out.println("3. Retirar dinero");
+                System.out.println("4. Transacciones internacionales");
+                System.out.println("5. Salir");
+                System.out.print("Seleccione una opción: ");
+                int opcion = scanner.nextInt();
+
+                switch (opcion) {
+                    case 1:
+                        System.out.println("Saldo actual: " + balance);
+                        break;
+                    case 2:
+                        System.out.print("Ingrese monto a depositar: ");
+                        double deposito = scanner.nextDouble();
+                        balance += deposito;
+                        System.out.println("Depósito exitoso. Nuevo saldo: " + balance);
+                        break;
+                    case 3:
+                        System.out.print("Ingrese monto a retirar: ");
+                        double retiro = scanner.nextDouble();
+                        if (retiro <= balance) {
+                            balance -= retiro;
+                            System.out.println("Retiro exitoso. Nuevo saldo: " + balance);
+                        } else {
+                            System.out.println("Fondos insuficientes.");
+                        }
+                        break;
+                    case 4:
+                        System.out.println("Transacciones internacionales no disponibles en esta versión.");
+                        break;
+                    case 5:
+                        running = false;
+                        System.out.println("¡Hasta luego!");
+                        break;
+                    default:
+                        System.out.println("Opción no válida.");
+                }
+            }
+            scanner.close();
         }
 
-        // uso de operadores
-        balance++; // Incrementa el saldo
-        String status = (balance < 0) ?"Deuda" : "Credito";
-        System.out.println("Account status: " + status);
-    }
+        public boolean authenticateUser(String inputPin) {
+            int attempts = 0;
+            while (attempts < 3) {
+                if (String.valueOf(this.pin).equals(inputPin)) {
+                    System.out.println("Usuario autenticado correctamente.");
+                    return true;
+                } else {
+                    attempts++;
+                    if (attempts < 3) {
+                        System.out.println("PIN incorrecto. Intentos restantes: " + (3 - attempts));
+                        Scanner scanner = new Scanner(System.in);
+                        System.out.print("Ingrese su PIN: ");
+                        inputPin = scanner.nextLine();
+                    }
+                }
+            }
+            return false;
+        }
 }
