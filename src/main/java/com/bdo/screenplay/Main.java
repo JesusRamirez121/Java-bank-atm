@@ -19,7 +19,7 @@ public class Main {
             return;
         }
 
-        Account cuenta = new Account("123456", 1500.75);
+        Account cuenta = new CheckingAccount("123456", 1500.75, "1234", 0);
         boolean running = true;
 
         while (running) {
@@ -47,11 +47,15 @@ public class Main {
                     System.out.print("Ingrese monto a retirar: ");
                     double retiro = scanner.nextDouble();
                     double saldoAntes = cuenta.getBalance();
-                    cuenta.withdraw(retiro);
-                    if (cuenta.getBalance() != saldoAntes) {
-                        System.out.println("Retiro exitoso. Nuevo saldo: " + cuenta.getBalance());
-                    } else {
-                        System.out.println("Fondos insuficientes.");
+                    try {
+                        cuenta.withdraw(retiro);
+                        if (cuenta.getBalance() != saldoAntes) {
+                            System.out.println("Retiro exitoso. Nuevo saldo: " + cuenta.getBalance());
+                        } else {
+                            System.out.println("Fondos insuficientes.");
+                        }
+                    } catch (InsufficientFundsException e) {
+                        System.out.println("Error: " + e.getMessage());
                     }
                     break;
                 case 4:

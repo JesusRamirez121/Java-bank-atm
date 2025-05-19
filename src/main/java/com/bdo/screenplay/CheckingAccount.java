@@ -3,24 +3,34 @@ package com.bdo.screenplay;
 public class CheckingAccount extends Account {
     private double overdraftLimit;
 
-    public CheckingAccount(String accountNumber, double initialBalance, double overdraftLimit) {
-        super(accountNumber, initialBalance);
+    public CheckingAccount(String accountNumber, double initialBalance, String pin, double overdraftLimit) {
+        super(accountNumber, initialBalance, pin);
         this.overdraftLimit = overdraftLimit;
     }
 
     @Override
-    public double withdraw(double amount) {
+    public void deposit(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("El monto a depositar debe ser positivo.");
+        }
+        try {
+            java.lang.reflect.Field balanceField = Account.class.getDeclaredField("balance");
+            balanceField.setAccessible(true);
+            double currentBalance = getBalance();
+            balanceField.set(this, currentBalance + amount);
+            getTransactionHistory().add("Depósito: $" + amount);
+        } catch (Exception e) {
+            throw new RuntimeException("No se pudo actualizar el saldo.", e);
+        }
+    }
+
+    @Override
+    public void withdraw(double amount) throws InsufficientFundsException {
         if (getBalance() + overdraftLimit >= amount) {
-            double newBalance = getBalance() - amount;
-            // Si el saldo es negativo, se está usando el sobregiro
-            // Actualiza el saldo y registra la transacción
-            // Usamos el método deposit(-amount) para restar
             deposit(-amount);
             getTransactionHistory().add("Retiro (cuenta corriente): $" + amount);
-            return getBalance();
         } else {
-            System.out.println("Fondos insuficientes (incluyendo sobregiro)");
-            return getBalance();
+            throw new InsufficientFundsException("Fondos insuficientes (incluyendo sobregiro)");
         }
     }
 

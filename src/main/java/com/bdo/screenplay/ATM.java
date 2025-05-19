@@ -3,7 +3,7 @@ package com.bdo.screenplay;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ATM {
+public class ATM implements Authenticatable {
     private List<Account> accounts;
 
     public ATM() {
@@ -22,5 +22,11 @@ public class ATM {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean authenticate(String pin) {
+        // Lógica simple de autenticación, puedes personalizarla según tu necesidad
+        return "1234".equals(pin);
     }
 }
